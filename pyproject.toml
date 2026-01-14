@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hello-termux"
+version = "0.1.0"
+description = "Hello World CLI pour valider l'environnement Termux"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{ name = "PE" }]
+keywords = ["termux", "hello", "cli"]
+
+[project.scripts]
+hello-termux = "hellotermux.__main__:main"
+
+[tool.setuptools]
+# Paquet directement à la racine pour un `python -m hellotermux` sans installation
+packages = ["hellotermux"]
