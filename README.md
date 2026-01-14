@@ -10,26 +10,23 @@ pkg install python git
 ```
 
 ## Utilisation rapide (sans installation)
-Cloner puis exécuter l'un des modes ci-dessous :
+Configurer puis exécuter :
 ```sh
-# 1) Script direct
-python hello.py
+# 1) Éditer la configuration
+# Ouvrir config.json et renseigner master_patient_signed_id si requis
 
-# 2) Module package
-python -m hellotermux
-
-# 3) Vérifier des disponibilités à partir d'un JSON local
-python -m hellotermux check --file ./data/slots.sample.json --months 3 --from 2026-01-14
+# 2) Lancer un scan (CLI minimale)
+python scan.py -rdv m6 -prat criton
 ```
 
 ## Installation en CLI (optionnel)
-Pour installer une commande système `hello-termux` :
+Pour installer une commande système `rdv-scan` :
 ```sh
-git clone https://github.com/USERNAME/hello-termux.git
-cd hello-termux
+git clone https://github.com/lerancho/doctolib.git
+cd doctolib
 pip install --upgrade pip
 pip install .
-hello-termux
+rdv-scan -rdv m6 -prat criton
 ```
 
 ## Développement local
@@ -48,8 +45,7 @@ Fichier simple avec la clé `slots` contenant des objets `{start, end}` au forma
 
 ### Exécuter
 ```sh
-python -m hellotermux
-python -m hellotermux check --file ./data/slots.sample.json --months 2
+python scan.py -rdv m6 -prat criton
 ```
 
 ### Désinstallation (si installé)
@@ -59,5 +55,15 @@ pip uninstall hello-termux
 
 ## Notes
 - Les fins de lignes sont en LF pour compatibilité Termux.
-- Le package est à la racine (pas de layout `src/`) pour permettre `python -m hellotermux` sans installation.
- - Le provider actuel lit un fichier local JSON pour démonstration. L'intégration à une API distante devra respecter ses CGU/TOS.
+ - Le package expose une commande `rdv-scan` après installation, sinon utilisez `python scan.py`.
+ - Provider distant: utilise une URL compatible Doctolib. Respectez les CGU/TOS du service.
+ - Notification: si `termux-notification` est disponible, une notification Android est envoyée.
+ - Déduplication: les créneaux déjà notifiés sont stockés dans `data/notified.txt` et ne seront plus notifiés.
+ - Toute configuration (URL, token, alias, months, limit) vit dans `config.json`.
+
+### Aliases fournis
+- RDV:
+	- `m6` → `visit_motive_ids=6425744`, `agenda_ids=942956`
+	- `p6` → `visit_motive_ids=6425745`, `agenda_ids=942956`
+- Praticien:
+	- `criton` → `practice_ids=6425745`

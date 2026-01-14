@@ -1,0 +1,15 @@
+{
+  "base_url": "https://www.doctolib.fr/availabilities.json",
+  "master_patient_signed_id": "eyJfcmFpbHMiOnsibWVzc2FnZSI6Ik1UQXdOak0wTXpNNCIsImV4cCI6bnVsbCwicHVyIjoib25saW5lX2lkZW50aXR5L21hc3Rlcl9wYXRpZW50In19--8529a10c1decec00f7122163989f0381fb89d0dbfbb37eb44fe2a223d83733e1",
+  "months": 6,
+  "limit": 5,
+  "rdv_aliases": {
+    "m6": {"visit_motive_ids": 6425744, "agenda_ids": 942956},
+    "p6": {"visit_motive_ids": 6425745, "agenda_ids": 942956}
+  },
+  "prat_aliases": {
+    "criton": 17604
+  },
+  "debug": false
+}
+

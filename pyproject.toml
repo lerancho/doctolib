@@ -12,7 +12,7 @@ authors = [{ name = "PE" }]
 keywords = ["termux", "hello", "cli"]
 
 [project.scripts]
-hello-termux = "hellotermux.__main__:main"
+rdv-scan = "hellotermux.cli:main"
 
 [tool.setuptools]
 # Paquet directement à la racine pour un `python -m hellotermux` sans installation
