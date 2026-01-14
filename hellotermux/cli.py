@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from datetime import date, datetime, timedelta
 from pathlib import Path
+import sys
 from typing import Optional
 
 from .config import load_config
@@ -98,6 +99,35 @@ def main() -> None:
     # Use alias-specific notified store (e.g., data/notified-p6.txt)
     store_path = Path("data") / f"notified-{args.rdv_alias}.txt"
 
+    # Built-in file logging: logs/scan-<alias>.log
+    log_path = Path("logs") / f"scan-{args.rdv_alias}.log"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    class _Tee:
+        def __init__(self, *streams):
+            self._streams = streams
+        def write(self, data: str):
+            for s in self._streams:
+                try:
+                    s.write(data)
+                    s.flush()
+                except Exception:
+                    pass
+        def flush(self):
+            for s in self._streams:
+                try:
+                    s.flush()
+                except Exception:
+                    pass
+
+    try:
+        log_file = log_path.open("a", encoding="utf-8")
+        sys.stdout = _Tee(sys.stdout, log_file)
+        sys.stderr = sys.stdout  # mirror stderr to the same log
+    except Exception:
+        # If logging fails, continue with stdout only
+        log_file = None
+
     # Log run header with timestamp
     now_txt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     prat_label_for_log = args.prat_alias or "-"
@@ -151,6 +181,11 @@ def main() -> None:
 
     # End of scan window: overwrite store with the complete set from this run
     write_notified(current_found_keys, store_path)
-    print(
-        f"[DONE] baseline={len(current_found_keys)} new_vs_prev={new_count} file={store_path}"
-    )
+    print(f"[DONE] baseline={len(current_found_keys)} new_vs_prev={new_count} file={store_path}")
+
+    # Close log file if opened
+    try:
+        if log_file:
+            log_file.close()
+    except Exception:
+        pass

@@ -19,3 +19,5 @@ Thumbs.db
 .idea/
 data/notified-m6.txt
 data/notified-p6.txt
+logs/scan-m6.log
+logs/scan-p6.log
