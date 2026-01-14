@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import date, datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 from .config import load_config
@@ -94,9 +95,18 @@ def main() -> None:
     start = date.today()
     search_end = start + timedelta(days=30 * max(1, cfg.months))
 
-    prev_notified = load_notified()
+    # Use alias-specific notified store (e.g., data/notified-p6.txt)
+    store_path = Path("data") / f"notified-{args.rdv_alias}.txt"
+
+    # Log run header with timestamp
+    now_txt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    prat_label_for_log = args.prat_alias or "-"
+    print(f"[RUN] {now_txt} rdv={args.rdv_alias} prat={prat_label_for_log} store={store_path}")
+
+    prev_notified = load_notified(store_path)
     current_found_keys: set[str] = set()
     current_start = start
+    new_count = 0
 
     while current_start <= search_end:
         try:
@@ -135,9 +145,12 @@ def main() -> None:
                     suffix = f" pour {prat_label}" if prat_label else ""
                     message = f"{day_txt} à {time_txt} les {rdv_label}{suffix}"
                     notify(message)
+                    new_count += 1
 
         current_start = _advance_to_next_start(resp, current_start)
 
     # End of scan window: overwrite store with the complete set from this run
-    write_notified(current_found_keys)
-    print(f"Scan terminé. {len(current_found_keys)} créneau(x) trouvé(s) pour baseline suivante.")
+    write_notified(current_found_keys, store_path)
+    print(
+        f"[DONE] baseline={len(current_found_keys)} new_vs_prev={new_count} file={store_path}"
+    )
